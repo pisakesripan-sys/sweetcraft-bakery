@@ -81,7 +81,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ onEditRecipe }) => {
     const desired = parseFloat(targetYieldInput);
     if (!isNaN(desired) && desired > 0 && recipe.yieldCount > 0) {
       const calculatedMult = desired / recipe.yieldCount;
-      setMultiplier(Math.round(calculatedMult * 100) / 100);
+      setMultiplier(calculatedMult);
       setShowScaleModal(false);
       setTargetYieldInput("");
     }
@@ -98,10 +98,10 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ onEditRecipe }) => {
       });
 
       if (baseAmount > 0) {
+        // Calculate exact multiplier without premature rounding to avoid 550g -> 552g issue
         const calculatedMult = desiredAmount / baseAmount;
-        setMultiplier(Math.round(calculatedMult * 100) / 100);
+        setMultiplier(calculatedMult);
         setShowScaleModal(false);
-        setIngredientScaleAmount("");
       }
     }
   };
@@ -215,8 +215,8 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ onEditRecipe }) => {
             <div className="flex items-center gap-2">
               <Scale className="w-5 h-5 text-amber-600" />
               <h3 className="font-bold text-stone-800 text-base">ปรับสัดส่วนสูตร (Scale Multiplier)</h3>
-              <span className="px-2 py-0.5 bg-amber-100 text-amber-800 text-xs font-bold rounded-lg">
-                {multiplier}x เท่า
+              <span className="px-2 py-0.5 bg-amber-100 text-amber-800 text-xs font-bold rounded-lg font-mono">
+                {Math.round(multiplier * 100) / 100}x เท่า
               </span>
             </div>
             <p className="text-xs text-stone-500 mt-1">
@@ -234,7 +234,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ onEditRecipe }) => {
                   key={p}
                   onClick={() => setMultiplier(p)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                    multiplier === p
+                    Math.abs(multiplier - p) < 0.001
                       ? "bg-amber-600 text-white shadow-sm"
                       : "text-stone-600 hover:text-stone-900 hover:bg-stone-200/60"
                   }`}
@@ -248,10 +248,10 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ onEditRecipe }) => {
             <div className="flex items-center gap-1.5">
               <input
                 type="number"
-                step="0.1"
-                min="0.1"
+                step="0.05"
+                min="0.05"
                 max="50"
-                value={multiplier}
+                value={Math.round(multiplier * 100) / 100}
                 onChange={(e) => {
                   const val = parseFloat(e.target.value);
                   if (!isNaN(val) && val > 0) setMultiplier(val);
@@ -263,7 +263,15 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ onEditRecipe }) => {
 
             {/* Smart Scaling Trigger */}
             <button
-              onClick={() => setShowScaleModal(!showScaleModal)}
+              onClick={() => {
+                const nextShow = !showScaleModal;
+                setShowScaleModal(nextShow);
+                if (nextShow && !ingredientScaleSelected && recipe.sections[0]?.ingredients[0]) {
+                  const firstIng = recipe.sections[0].ingredients[0];
+                  setIngredientScaleSelected(firstIng.id);
+                  setIngredientScaleAmount(String(Math.round(firstIng.amount * multiplier * 100) / 100));
+                }
+              }}
               className="flex items-center gap-1.5 px-3 py-2 bg-stone-50 hover:bg-amber-50 border border-stone-200 hover:border-amber-300 text-stone-700 hover:text-amber-900 rounded-xl text-xs font-semibold transition-colors"
               title="คำนวณจากจำนวนกระปุก หรือวัตถุดิบที่มี"
             >
@@ -313,7 +321,22 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ onEditRecipe }) => {
               <div className="grid grid-cols-2 gap-2 mb-2">
                 <select
                   value={ingredientScaleSelected}
-                  onChange={(e) => setIngredientScaleSelected(e.target.value)}
+                  onChange={(e) => {
+                    const selId = e.target.value;
+                    setIngredientScaleSelected(selId);
+                    if (selId) {
+                      let foundAmt = 0;
+                      recipe.sections.forEach(s => {
+                        const found = s.ingredients.find(i => i.id === selId);
+                        if (found) foundAmt = found.amount;
+                      });
+                      if (foundAmt > 0) {
+                        setIngredientScaleAmount(String(Math.round(foundAmt * multiplier * 100) / 100));
+                      }
+                    } else {
+                      setIngredientScaleAmount("");
+                    }
+                  }}
                   className="px-2.5 py-1.5 bg-white border border-stone-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-amber-500"
                 >
                   <option value="">-- เลือกวัตถุดิบ --</option>
@@ -327,21 +350,24 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ onEditRecipe }) => {
                 <div className="flex items-center gap-1.5">
                   <input
                     type="number"
-                    placeholder="ปริมาณที่มี"
+                    placeholder="เช่น 550"
                     value={ingredientScaleAmount}
                     onChange={(e) => setIngredientScaleAmount(e.target.value)}
-                    className="w-full px-2.5 py-1.5 bg-white border border-stone-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleScaleByIngredient();
+                    }}
+                    className="w-full px-2.5 py-1.5 bg-white border border-stone-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono"
                   />
                   <button
                     onClick={handleScaleByIngredient}
-                    className="px-3 py-1.5 bg-stone-800 hover:bg-black text-white font-semibold text-xs rounded-xl transition-colors shrink-0"
+                    className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white font-semibold text-xs rounded-xl transition-colors shrink-0 shadow-sm"
                   >
                     ปรับ
                   </button>
                 </div>
               </div>
               <p className="text-[11px] text-stone-500">
-                ใส่น้ำหนักวัตถุดิบที่มี แล้วระบบจะคำนวณวัตถุดิบตัวอื่นตามสัดส่วน
+                ใส่น้ำหนักวัตถุดิบที่มี (เช่น วิปครีม 550 กรัม) ระบบจะเริ่มคำนวณและปรับวัตถุดิบอื่นตามสัดส่วนพอดีเป๊ะ
               </p>
             </div>
           </div>
@@ -395,7 +421,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ onEditRecipe }) => {
                   <tr className="border-b border-stone-100 text-[11px] font-bold text-stone-400 uppercase tracking-wider bg-stone-50/30">
                     <th className="py-3 px-6">วัตถุดิบ</th>
                     <th className="py-3 px-4">ยี่ห้อ / สเปค (คลิกเพื่อแก้ไข)</th>
-                    <th className="py-3 px-6 text-right">ปริมาณตามสัดส่วน ({multiplier}x)</th>
+                    <th className="py-3 px-6 text-right">ปริมาณตามสัดส่วน ({Math.round(multiplier * 100) / 100}x)</th>
                     <th className="py-3 px-4 text-right hidden sm:table-cell text-stone-400">สูตรตั้งต้น (1x)</th>
                   </tr>
                 </thead>
@@ -517,7 +543,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({ onEditRecipe }) => {
           <div className="text-2xl">{recipe.emoji}</div>
           <div>
             <div className="text-xs text-stone-400">กำลังดูสูตร</div>
-            <div className="font-bold text-sm text-stone-100">{recipe.name} ({multiplier}x)</div>
+            <div className="font-bold text-sm text-stone-100">{recipe.name} ({Math.round(multiplier * 100) / 100}x)</div>
           </div>
         </div>
 

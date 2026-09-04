@@ -41,14 +41,16 @@ export const PinLock: React.FC<PinLockProps> = ({ onUnlock }) => {
   return (
     <div className="fixed inset-0 z-50 bg-[#faf6f0] flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-sm bg-white rounded-3xl p-8 border border-stone-200/80 shadow-2xl text-center animate-in fade-in zoom-in-95">
-        {/* Logo */}
-        <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-amber-500 to-amber-700 text-white flex items-center justify-center mx-auto mb-4 shadow-lg shadow-amber-500/30">
-          <Lock className="w-8 h-8" />
+        {/* AT App Logo */}
+        <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-amber-600 via-amber-700 to-stone-900 text-white flex flex-col items-center justify-center mx-auto mb-4 shadow-xl shadow-amber-700/25 border-2 border-amber-400/30 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent pointer-events-none" />
+          <span className="font-black text-2xl tracking-wider text-amber-100 drop-shadow-sm font-mono">AT</span>
+          <span className="text-[9px] font-bold tracking-widest text-amber-200/90 uppercase -mt-0.5">BAKERY</span>
         </div>
 
-        <h2 className="text-2xl font-black text-stone-800 tracking-tight">SweetCraft Master</h2>
+        <h2 className="text-2xl font-black text-stone-800 tracking-tight">AT Master</h2>
         <p className="text-xs text-stone-500 mt-1 mb-6">
-          เว็บแอปนี้สงวนสิทธิ์เฉพาะผู้มีรหัสผ่านเข้าใช้งาน
+          กรุณากรอกรหัสผ่านเพื่อเข้าใช้งานระบบ
         </p>
 
         {/* PIN Dots Display */}
@@ -104,9 +106,10 @@ export const PinLock: React.FC<PinLockProps> = ({ onUnlock }) => {
           </button>
         </div>
 
-        <div className="pt-4 border-t border-stone-100">
-          <p className="text-[11px] text-stone-400">
-            รหัสผ่านเริ่มต้นคือ: <strong className="text-amber-800 font-mono font-bold">1234</strong>
+        <div className="pt-4 border-t border-stone-100 flex items-center justify-center gap-1.5 text-stone-400">
+          <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
+          <p className="text-[11px]">
+            ระบบความปลอดภัยสำหรับเข้าใช้งานแอป
           </p>
         </div>
       </div>

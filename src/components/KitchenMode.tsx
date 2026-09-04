@@ -92,7 +92,7 @@ export const KitchenMode: React.FC = () => {
                   โหมดตวง & ปรุงในครัว
                 </span>
                 <span className="text-xs px-2 py-0.5 bg-white/20 rounded-full font-bold">
-                  {multiplier}x เท่า
+                  {Math.round(multiplier * 100) / 100}x เท่า
                 </span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-black text-white">

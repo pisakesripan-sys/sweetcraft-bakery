@@ -131,7 +131,7 @@ export const CostCalculator: React.FC = () => {
         {/* Card 1: Total Batch Cost */}
         <div className="bg-white rounded-3xl p-5 border border-stone-200/80 shadow-sm relative overflow-hidden">
           <div className="text-[11px] font-bold text-stone-400 uppercase tracking-wider mb-1">
-            ต้นทุนรวมทั้งสูตร ({multiplier}x)
+            ต้นทุนรวมทั้งสูตร ({Math.round(multiplier * 100) / 100}x)
           </div>
           <div className="font-mono text-3xl font-black text-stone-900">
             ฿{cost.totalCost.toFixed(2)}

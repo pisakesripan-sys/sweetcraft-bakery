@@ -36,7 +36,7 @@ export const ShoppingListModal: React.FC = () => {
 
   const copyToClipboard = () => {
     const lines: string[] = [];
-    lines.push("🛒 รายการจ่ายตลาดซื้อวัตถุดิบทำขนม (SweetCraft)");
+    lines.push("🛒 รายการจ่ายตลาดซื้อวัตถุดิบทำขนม (AT Bakery)");
     lines.push("================================");
     
     // Included recipes
