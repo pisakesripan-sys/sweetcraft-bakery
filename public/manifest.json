@@ -1,11 +1,11 @@
 {
-  "name": "AT - Bakery Recipe & Cost Master",
-  "short_name": "AT",
-  "description": "ระบบจัดการสูตรขนม ปรับสัดส่วนวัตถุดิบอัตโนมัติ และคำนวณต้นทุนเบเกอรี่",
+  "name": "S",
+  "short_name": "S",
+  "description": "AT Recipe App",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#faf6f0",
-  "theme_color": "#f59e0b",
+  "background_color": "#18181b",
+  "theme_color": "#18181b",
   "icons": [
     {
       "src": "/favicon-32x32.png",

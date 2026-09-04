@@ -72,8 +72,8 @@ const MainContent: React.FC = () => {
         )}
       </main>
 
-      {/* Floating Kitchen Timer */}
-      <TimerWidget />
+      {/* Floating Kitchen Timer - only shown in Kitchen Mode */}
+      {viewMode === "kitchen" && <TimerWidget />}
 
       {/* Recipe Form Modal */}
       <RecipeFormModal

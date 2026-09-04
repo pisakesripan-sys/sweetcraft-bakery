@@ -55,17 +55,11 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewRecipe }) => {
             className="flex items-center gap-3 cursor-pointer group"
             onClick={() => setViewMode("recipes")}
           >
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-amber-600 via-amber-700 to-stone-900 text-white flex flex-col items-center justify-center shadow-md shadow-amber-600/25 group-hover:scale-105 transition-transform border border-amber-400/30 overflow-hidden relative shrink-0">
-              <span className="font-black text-sm sm:text-base tracking-wider text-amber-100 font-mono leading-none">AT</span>
-              <span className="text-[7px] sm:text-[8px] font-bold tracking-widest text-amber-200/90 uppercase leading-none mt-0.5">BAKERY</span>
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-stone-900 text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform shrink-0">
+              <span className="font-black text-lg sm:text-xl tracking-wider text-stone-100 font-sans">AT</span>
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <span className="font-black text-xl sm:text-2xl text-stone-800 tracking-tight">AT</span>
-                <span className="text-[11px] font-semibold uppercase px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full border border-amber-200">
-                  Bakery Master
-                </span>
-              </div>
+              <span className="font-black text-xl sm:text-2xl text-stone-900 tracking-tight block">AT</span>
               <p className="text-xs text-stone-500 hidden sm:block">ระบบจัดการสูตรขนม คำนวณวัตถุดิบ & คิดต้นทุนขาย</p>
             </div>
           </div>
